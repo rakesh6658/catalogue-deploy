@@ -54,7 +54,7 @@ resource "aws_ec2_instance_state" "catalogue_instance" {
 
 
 resource "aws_ami_from_instance" "catalogue_ami" {
-  name               = "${var.common_tags.Component}-${local.current_time}"
+  name               = "${var.common_tags.component}-${local.current_time}"
   source_instance_id = module.catalogue_instance.id
   depends_on = [ aws_ec2_instance_state.catalogue_instance ]
 }
@@ -73,7 +73,7 @@ resource "null_resource" "delete_instance" {
 }
 
 resource "aws_lb_target_group" "catalogue" {
-  name     = "${var.project_name}-${var.common_tags.Component}-${var.env}"
+  name     = "${var.project_name}-${var.common_tags.component}-${var.env}"
   port     = 8080
   protocol = "HTTP"
   vpc_id   = data.aws_ssm_parameter.vpc_id.value
@@ -92,7 +92,7 @@ resource "aws_lb_target_group" "catalogue" {
 }
 
 resource "aws_launch_template" "catalogue" {
-  name = "${var.project_name}-${var.common_tags.Component}-${var.env}"
+  name = "${var.project_name}-${var.common_tags.component}-${var.env}"
 
   # Here AMI ID should be the one we just created
   image_id = aws_ami_from_instance.catalogue_ami.id
@@ -113,7 +113,7 @@ resource "aws_launch_template" "catalogue" {
 }
 
 resource "aws_autoscaling_group" "catalogue" {
-  name                      = "${var.project_name}-${var.common_tags.Component}-${var.env}-${local.current_time}"
+  name                      = "${var.project_name}-${var.common_tags.component}-${var.env}-${local.current_time}"
   max_size                  = 2
   min_size                  = 2
   health_check_grace_period = 300
